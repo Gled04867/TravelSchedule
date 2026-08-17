@@ -15,7 +15,7 @@ struct ContentView: View {
         .onAppear() {
             testFetchNearestStations()
             testFetchCopyright()
-            testFetchSchedualBetweenStations()
+            testFetchScheduleBetweenStations()
             testFetchStationSchedule()
             testFetchRouteStations()
             testFetchNearestCity()
@@ -24,13 +24,17 @@ struct ContentView: View {
         }
     }
     
+    private func makeClient() throws -> Client {
+        Client(
+            serverURL: try Servers.Server1.url(),
+            transport: URLSessionTransport()
+        )
+    }
+    
     func testFetchNearestStations() {
         Task {
             do {
-                let client = Client(
-                    serverURL: try Servers.Server1.url(),
-                    transport: URLSessionTransport()
-                )
+                let client = try makeClient()
                 let service = NearestStationsService(client: client, apikey: APIConstants.apiKey)
                 let stations = try await service.getNearestStations(lat: 59.864177, lng: 30.319163, distance: 50)
                 print("NearestStations: \(stations)")
@@ -43,10 +47,7 @@ struct ContentView: View {
     func testFetchCopyright() {
         Task {
             do {
-                let client = Client(
-                    serverURL: try Servers.Server1.url(),
-                    transport: URLSessionTransport()
-                )
+                let client = try makeClient()
                 let service = CopyrightService(client: client, apikey: APIConstants.apiKey)
                 let copyright = try await service.getCopyright()
                 print("Copyright: \(copyright)")
@@ -56,13 +57,10 @@ struct ContentView: View {
         }
     }
     
-    func testFetchSchedualBetweenStations() {
+    func testFetchScheduleBetweenStations() {
         Task {
             do {
-                let client = Client(
-                    serverURL: try Servers.Server1.url(),
-                    transport: URLSessionTransport()
-                )
+                let client = try makeClient()
                 let service = SchedualBetweenStationsService(client: client, apikey: APIConstants.apiKey)
                 let segments = try await service.getSchedualBetweenStations(from: "s9600213", to: "s9600799")
                 print("SchedualBetweenStations: \(segments)")
@@ -75,10 +73,7 @@ struct ContentView: View {
     func testFetchStationSchedule() {
         Task {
             do {
-                let client = Client(
-                    serverURL: try Servers.Server1.url(),
-                    transport: URLSessionTransport()
-                )
+                let client = try makeClient()
                 let service = StationScheduleService(client: client, apikey: APIConstants.apiKey)
                 let schedule = try await service.getStationSchedule(station: "s9600213")
                 print("StationSchedule: \(schedule)")
@@ -91,10 +86,7 @@ struct ContentView: View {
     func testFetchRouteStations() {
         Task {
             do {
-                let client = Client(
-                    serverURL: try Servers.Server1.url(),
-                    transport: URLSessionTransport()
-                )
+                let client = try makeClient()
                 let service = RouteStationsService(client: client, apikey: APIConstants.apiKey)
                 let route = try await service.getRouteStations(uid: "111")
                 print("RouteStations: \(route)")
@@ -107,10 +99,7 @@ struct ContentView: View {
     func testFetchNearestCity() {
         Task {
             do {
-                let client = Client(
-                    serverURL: try Servers.Server1.url(),
-                    transport: URLSessionTransport()
-                )
+                let client = try makeClient()
                 let service = NearestCityService(client: client, apikey: APIConstants.apiKey)
                 let city = try await service.getNearestCity(lat: 59.864177, lng: 30.319163)
                 print("NearestCity: \(city)")
@@ -123,10 +112,7 @@ struct ContentView: View {
     func testFetchCarrierInfo() {
         Task {
             do {
-                let client = Client(
-                    serverURL: try Servers.Server1.url(),
-                    transport: URLSessionTransport()
-                )
+                let client = try makeClient()
                 let service = CarrierInfoService(client: client, apikey: APIConstants.apiKey)
                 let carrier = try await service.getCarrierInfo(code: "111")
                 print("CarrierInfo: \(carrier)")
@@ -139,10 +125,7 @@ struct ContentView: View {
     func testFetchAllStations() {
         Task {
             do {
-                let client = Client(
-                    serverURL: try Servers.Server1.url(),
-                    transport: URLSessionTransport()
-                )
+                let client = try makeClient()
                 let service = AllStationsService(client: client, apikey: APIConstants.apiKey)
                 let allStations = try await service.getAllStations()
                 print("AllStations: \(allStations)")
