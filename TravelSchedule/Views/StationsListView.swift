@@ -36,6 +36,7 @@ struct StationsListView: View {
                         selectedCity = "\(cityName) (\(station))"
                         isPresented = false
                     }
+                    .listRowSeparator(.hidden)
                 }
                 .listStyle(.plain)
             }

@@ -18,6 +18,8 @@ struct MainView: View {
                         isSelectingFrom = true
                         showCityList = true
                     }
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .foregroundStyle(fromCity.isEmpty ? ColorConstants.grayUniversal : ColorConstants.blackUniversal)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
@@ -28,6 +30,8 @@ struct MainView: View {
                         isSelectingFrom = false
                         showCityList = true
                     }
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .foregroundStyle(toCity.isEmpty ? ColorConstants.grayUniversal : ColorConstants.blackUniversal)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
@@ -53,14 +57,14 @@ struct MainView: View {
             if !fromCity.isEmpty && !toCity.isEmpty {
                 NavigationLink {
                     CarrierListView()
+                        .toolbar(.hidden, for: .tabBar)
                 } label: {
                     Text("Найти")
-                        .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 48)
                         .background(ColorConstants.blueUniversal)
                         .foregroundStyle(ColorConstants.whiteUniversal)
                         .cornerRadius(16)
-                        .padding(.horizontal)
                 }
             }
             

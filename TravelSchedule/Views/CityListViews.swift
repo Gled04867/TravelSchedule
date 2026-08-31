@@ -34,6 +34,7 @@ struct CityListView: View {
                     NavigationLink(city) {
                         StationsListView(selectedCity: $selectedCity, isPresented: $isPresented, cityName: city)
                     }
+                    .listRowSeparator(.hidden)
                 }
                 .listStyle(.plain)
             }
