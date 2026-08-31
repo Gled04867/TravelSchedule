@@ -5,22 +5,17 @@ import OpenAPIURLSession
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-        .onAppear() {
-            testFetchNearestStations()
-            testFetchCopyright()
-            testFetchScheduleBetweenStations()
-            testFetchStationSchedule()
-            testFetchRouteStations()
-            testFetchNearestCity()
-            testFetchCarrierInfo()
-            testFetchAllStations()
+        TabView {
+            NavigationStack {
+                MainView()
+            }
+            .tabItem {
+                Image(systemName: "arrow.up.circle.fill")
+            }
+            SettingsView()
+                .tabItem {
+                    Image(systemName: "gearshape.fill")
+                }
         }
     }
     
