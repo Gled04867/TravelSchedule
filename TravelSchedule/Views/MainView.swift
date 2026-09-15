@@ -5,12 +5,25 @@ struct MainView: View {
     @State private var toCity: String = ""
     @State private var showCityList = false
     @State private var isSelectingFrom = true
+    @State private var stories = StoryCard.stories
+    @State private var showStories = false
+    @State private var selectedStoryIndex = 0
     
     var body: some View {
         VStack(spacing: 16) {
-            Rectangle()
-                .fill(Color.clear)
-                .frame(height: 188)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(stories.indices, id: \.self) { index in
+                        StoryCardView(story: stories[index])
+                            .onTapGesture {
+                                selectedStoryIndex = index
+                                showStories = true
+                                stories[index].isViewed = true
+                            }
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
             
             HStack(spacing: 10) {
                 VStack(spacing: 0) {
@@ -77,6 +90,13 @@ struct MainView: View {
                     isPresented: $showCityList
                 )
             }
+        }
+        .fullScreenCover(isPresented: $showStories) {
+            StoriesView(
+                stories: $stories,
+                startIndex: selectedStoryIndex,
+                isPresented: $showStories
+            )
         }
     }
 }

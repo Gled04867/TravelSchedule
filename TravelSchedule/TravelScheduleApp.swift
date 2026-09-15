@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct TravelScheduleApp: App {
     @State private var isLaunching = true
+    @AppStorage("isDarkMode") private var isDarkMode = false
     
     var body: some Scene {
         WindowGroup {
@@ -23,6 +24,7 @@ struct TravelScheduleApp: App {
                     ContentView()
                 }
             }
+            .preferredColorScheme(isDarkMode ? .dark : .light)
         }
     }
 }
