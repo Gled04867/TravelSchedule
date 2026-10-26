@@ -6,23 +6,19 @@ struct StoriesView: View {
     let startIndex: Int
     @Binding var isPresented: Bool
     
-    @State private var currentIndex: Int
-    @State private var progress: CGFloat = 0
-    @State private var timer: Timer.TimerPublisher = Timer.publish(every: 0.05, on: .main, in: .common)
-    @State private var cancellable: Cancellable?
+    @State private var viewModel: StoriesViewModel
     
     init(stories: Binding<[StoryCard]>, startIndex: Int, isPresented: Binding<Bool>) {
         self._stories = stories
         self.startIndex = startIndex
         self._isPresented = isPresented
-        self._currentIndex = State(initialValue: startIndex)
+        self._viewModel = State(initialValue: StoriesViewModel(startIndex: startIndex))
     }
     
-    private var currentStory: StoryCard { stories[currentIndex] }
+    private var currentStory: StoryCard { stories[viewModel.currentIndex] }
     
     var body: some View {
         ZStack {
-            
             Image(currentStory.fullImage)
                 .resizable()
                 .scaledToFill()
@@ -42,9 +38,9 @@ struct StoriesView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 40)
             }
-
+            
             VStack {
-                ProgressBar(numberOfSections: stories.count, progress: progress)
+                ProgressBar(numberOfSections: stories.count, progress: viewModel.progress)
                     .frame(height: 6)
                     .padding(.horizontal, 12)
                     .padding(.top, 28)
@@ -70,71 +66,37 @@ struct StoriesView: View {
             }
         }
         .onAppear {
-            stories[currentIndex].isViewed = true  // ← добавили
-                    progress = CGFloat(currentIndex) / CGFloat(stories.count)
-                    timer = Timer.publish(every: 0.05, on: .main, in: .common)
-                    cancellable = timer.connect()
+            stories[viewModel.currentIndex].isViewed = true
+            viewModel.progress = CGFloat(viewModel.currentIndex) / CGFloat(stories.count)
+            viewModel.startTimer()
         }
         .onDisappear {
-            cancellable?.cancel()
+            viewModel.stopTimer()
         }
-        .onReceive(timer) { _ in
-            timerTick()
+        .onReceive(viewModel.timer) { _ in
+            viewModel.timerTick(storiesCount: stories.count) {
+                isPresented = false
+            }
         }
         .onTapGesture {
-            nextStory()
-            resetTimer()
+            viewModel.nextStory(storiesCount: stories.count) {
+                isPresented = false
+            }
+            viewModel.resetTimer()
         }
         .gesture(
             DragGesture()
                 .onEnded { value in
                     if value.translation.width < -50 {
-                        nextStory()
-                        resetTimer()
+                        viewModel.nextStory(storiesCount: stories.count) {
+                            isPresented = false
+                        }
+                        viewModel.resetTimer()
                     } else if value.translation.width > 50 {
-                        prevStory()
-                        resetTimer()
+                        viewModel.prevStory()
+                        viewModel.resetTimer()
                     }
                 }
         )
-    }
-    
-    private func timerTick() {
-        let progressPerTick = 1.0 / CGFloat(stories.count) / 5.0 * 0.05
-        var nextProgress = progress + progressPerTick
-        if nextProgress >= CGFloat(currentIndex + 1) / CGFloat(stories.count) {
-            nextStory()
-            return
-        }
-        if nextProgress >= 1 {
-            nextProgress = 0
-            isPresented = false
-        }
-        progress = nextProgress
-    }
-    
-    private func nextStory() {
-        let nextIndex = currentIndex + 1
-        if nextIndex < stories.count {
-            currentIndex = nextIndex
-            stories[nextIndex].isViewed = true
-            progress = CGFloat(nextIndex) / CGFloat(stories.count)
-        } else {
-            isPresented = false
-        }
-    }
-    
-    private func resetTimer() {
-        cancellable?.cancel()
-        timer = Timer.publish(every: 0.05, on: .main, in: .common)
-        cancellable = timer.connect()
-    }
-    
-    private func prevStory() {
-        let prevIndex = currentIndex - 1
-        if prevIndex >= 0 {
-            currentIndex = prevIndex
-            progress = CGFloat(prevIndex) / CGFloat(stories.count)
-        }
     }
 }

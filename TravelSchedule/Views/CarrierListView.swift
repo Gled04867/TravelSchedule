@@ -1,31 +1,38 @@
 import SwiftUI
 
 struct CarrierListView: View {
-    @State private var showCarrierCard = false
-    
-    let carriers = [
-        Carrier(name: "РЖД", transfer: "С пересадкой в Костроме", date: "14 января", departure: "22:30", duration: "20 часов", arrival: "08:15"),
-        Carrier(name: "ФГК", transfer: nil, date: "15 января", departure: "01:15", duration: "9 часов", arrival: "09:00"),
-        Carrier(name: "Урал логистика", transfer: nil, date: "16 января", departure: "12:30", duration: "9 часов", arrival: "21:00"),
-        Carrier(name: "РЖД", transfer: "С пересадкой в Костроме", date: "17 января", departure: "22:30", duration: "20 часов", arrival: "08:15")
-    ]
+    let fromCode: String
+    let toCode: String
+    let fromCity: String
+    let toCity: String
+    @State private var viewModel = CarrierListViewModel()
     
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(alignment: .leading) {
-                Text("Москва (Ярославский вокзал) → Санкт Петербург (Балтийский вокзал)")
+                Text(viewModel.routeTitle)
                     .font(.system(size: 24, weight: .bold))
                     .padding(.horizontal)
                 
-                List(carriers, id: \.name) { carrier in
-                    CarrierRowView(carrier: carrier)
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                        .onTapGesture {
-                            showCarrierCard = true
-                        }
+                if viewModel.isLoading {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                } else if viewModel.hasError {
+                    Spacer()
+                    ServerErrorView()
+                    Spacer()
+                } else {
+                    List(viewModel.carriers, id: \.departure) { carrier in
+                        CarrierRowView(carrier: carrier)
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                            .onTapGesture {
+                                viewModel.showCarrierCard = true
+                            }
+                    }
+                    .listStyle(.plain)
                 }
-                .listStyle(.plain)
             }
             
             NavigationLink {
@@ -40,12 +47,19 @@ struct CarrierListView: View {
                     .padding(.horizontal)
             }
         }
-        .navigationDestination(isPresented: $showCarrierCard) {
-                CarrierCard()
-            }
+        .navigationDestination(isPresented: $viewModel.showCarrierCard) {
+            CarrierCard()
+        }
+        .onAppear {
+            viewModel.fromCity = fromCity
+            viewModel.toCity = toCity
+        }
+        .task {
+            await viewModel.loadCarriers(from: fromCode, to: toCode)
+        }
     }
 }
 
 #Preview {
-    CarrierListView()
+    CarrierListView(fromCode: "s9600213", toCode: "s9600217", fromCity: "Москва (Ленинградский вокзал)", toCity: "Санкт-Петербург (Московский вокзал)")
 }

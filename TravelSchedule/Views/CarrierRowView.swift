@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CarrierRowView: View {
-    let carrier: Carrier
+    let carrier: CarrierModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
