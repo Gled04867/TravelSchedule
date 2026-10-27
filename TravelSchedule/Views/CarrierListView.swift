@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct CarrierListView: View {
+    @State private var showCarrierCard = false
+    
     let carriers = [
         Carrier(name: "РЖД", transfer: "С пересадкой в Костроме", date: "14 января", departure: "22:30", duration: "20 часов", arrival: "08:15"),
         Carrier(name: "ФГК", transfer: nil, date: "15 января", departure: "01:15", duration: "9 часов", arrival: "09:00"),
@@ -19,6 +21,9 @@ struct CarrierListView: View {
                     CarrierRowView(carrier: carrier)
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
+                        .onTapGesture {
+                            showCarrierCard = true
+                        }
                 }
                 .listStyle(.plain)
             }
@@ -35,6 +40,9 @@ struct CarrierListView: View {
                     .padding(.horizontal)
             }
         }
+        .navigationDestination(isPresented: $showCarrierCard) {
+                CarrierCard()
+            }
     }
 }
 
