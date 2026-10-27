@@ -1,6 +1,6 @@
 import Foundation
 
-struct Carrier {
+struct CarrierModel: Sendable {
     let name: String
     let transfer: String?
     let date: String

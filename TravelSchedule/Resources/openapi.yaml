@@ -512,11 +512,9 @@ components:
           $ref: '#/components/schemas/Station'
         departure:
           type: string
-          format: date-time
           description: Время отправления
         arrival:
           type: string
-          format: date-time
           description: Время прибытия
         thread:
           $ref: '#/components/schemas/Thread'

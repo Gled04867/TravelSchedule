@@ -1,12 +1,13 @@
 import SwiftUI
 
 struct CarrierCard: View {
-    @Environment(\.dismiss) var dismiss
+    @State private var viewModel = CarrierCardViewModel()
+    
     var body: some View {
         VStack(spacing: 16) {
-            Image("RzdImage")
+            Image(viewModel.imageName)
             
-            Text("ОАО «РЖД»")
+            Text(viewModel.carrierName)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundStyle(ColorConstants.black)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -17,7 +18,7 @@ struct CarrierCard: View {
                     Text("E-mail")
                         .font(.system(size: 17, weight: .regular))
                         .foregroundStyle(ColorConstants.black)
-                    Text("i.lozgkina@yandex.ru")
+                    Text(viewModel.email)
                         .font(.system(size: 12, weight: .regular))
                         .foregroundStyle(ColorConstants.blueUniversal)
                 }
@@ -28,7 +29,7 @@ struct CarrierCard: View {
                     Text("Телефон")
                         .font(.system(size: 17, weight: .regular))
                         .foregroundStyle(ColorConstants.black)
-                    Text("+7 (904) 329-27-71")
+                    Text(viewModel.phone)
                         .font(.system(size: 12, weight: .regular))
                         .foregroundStyle(ColorConstants.blueUniversal)
                 }

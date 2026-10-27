@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct StoryCard: Identifiable {
+struct StoryCard: Identifiable, Sendable {
     let id = UUID()
     let previewImage: String
     let fullImage: String

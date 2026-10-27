@@ -1,16 +1,7 @@
 import SwiftUI
 
 struct FiltersView: View {
-    @State private var morningSelected = false
-    @State private var afternoonSelected = false
-    @State private var eveningSelected = false
-    @State private var nightSelected = false
-    
-    @State private var showTransfers = true
-    
-    var hasSelection: Bool {
-        morningSelected || afternoonSelected || eveningSelected || nightSelected
-    }
+    @State private var viewModel = FiltersViewModel()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -18,10 +9,10 @@ struct FiltersView: View {
                 .font(.system(size: 24, weight: .bold))
                 .padding()
             
-            FilterRowView(title: "Утро 06:00 - 12:00", isSelected: $morningSelected)
-            FilterRowView(title: "День 12:00 - 18:00", isSelected: $afternoonSelected)
-            FilterRowView(title: "Вечер 18:00 - 00:00", isSelected: $eveningSelected)
-            FilterRowView(title: "Ночь 00:00 - 06:00", isSelected: $nightSelected)
+            FilterRowView(title: "Утро 06:00 - 12:00", isSelected: $viewModel.morningSelected)
+            FilterRowView(title: "День 12:00 - 18:00", isSelected: $viewModel.afternoonSelected)
+            FilterRowView(title: "Вечер 18:00 - 00:00", isSelected: $viewModel.eveningSelected)
+            FilterRowView(title: "Ночь 00:00 - 06:00", isSelected: $viewModel.nightSelected)
             
             Text("Показывать варианты с пересадками")
                 .font(.system(size: 24, weight: .bold))
@@ -30,24 +21,24 @@ struct FiltersView: View {
             HStack {
                 Text("Да")
                 Spacer()
-                Image(systemName: showTransfers ? "circle.inset.filled" : "circle")
-                    .foregroundStyle(ColorConstants.black)
+                Image(systemName: viewModel.showTransfers ? "circle.inset.filled" : "circle")
+                    .foregroundStyle(ColorConstants.blackUniversal)
             }
             .padding()
-            .onTapGesture { showTransfers = true }
+            .onTapGesture { viewModel.showTransfers = true }
             
             HStack {
                 Text("Нет")
                 Spacer()
-                Image(systemName: showTransfers ? "circle" : "circle.inset.filled")
-                    .foregroundStyle(ColorConstants.black)
+                Image(systemName: viewModel.showTransfers ? "circle" : "circle.inset.filled")
+                    .foregroundStyle(ColorConstants.blackUniversal)
             }
             .padding()
-            .onTapGesture { showTransfers = false }
+            .onTapGesture { viewModel.showTransfers = false }
             
             Spacer()
             
-            if hasSelection {
+            if viewModel.hasSelection {
                 Button("Применить") { }
                     .frame(maxWidth: .infinity)
                     .padding()
